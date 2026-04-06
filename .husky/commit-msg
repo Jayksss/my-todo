@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+MSG_FILE=$1
+MESSAGE=$(cat "$MSG_FILE")
+
+echo "$MESSAGE" | grep -qE '^MTD-[0-9]+ .+' || {
+  echo ""
+  echo "❌ 커밋 메시지 형식 오류"
+  echo "────────────────────────────"
+  echo "✔ 올바른 형식: MTD-123 메시지내용"
+  echo "✔ 또는 브랜치명에 Jira 티켓번호 포함여부 확인"
+  echo "   예) feature/MTD-123-login-api"
+  echo "────────────────────────────"
+  echo ""
+  exit 1
+}

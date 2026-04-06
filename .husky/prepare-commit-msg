@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+BRANCH_NAME=$(git branch --show-current)
+TICKET=$(echo "$BRANCH_NAME" | grep -oE 'MTD-[0-9]+' | head -n 1)
+
+if [ -z "$TICKET" ]; then
+  exit 0
+fi
+
+# merge, squash, amend 등은 필요시 제외
+case "$COMMIT_SOURCE" in
+  merge|squash|commit)
+    exit 0
+    ;;
+esac
+
+CURRENT_MSG=$(cat "$MSG_FILE")
+
+# 이미 티켓번호가 들어가 있으면 중복 삽입하지 않음
+echo "$CURRENT_MSG" | grep -q "^$TICKET" && exit 0
+
+echo "$TICKET $CURRENT_MSG" > "$MSG_FILE"
